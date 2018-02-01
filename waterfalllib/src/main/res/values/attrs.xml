@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RayWaterFallsLayout">
+        <!--瀑布流列数-->
+        <attr name="column" format="integer"/>
+        <!--是否通过测量高度添加子控件-->
+        <attr name="is_measure_height" format="boolean"/>
+    </declare-styleable>
+</resources>

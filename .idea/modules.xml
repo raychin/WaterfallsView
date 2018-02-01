@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/WaterfallsView.iml" filepath="$PROJECT_DIR$/WaterfallsView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rrefreshlayoutlib/rrefreshlayoutlib.iml" filepath="$PROJECT_DIR$/rrefreshlayoutlib/rrefreshlayoutlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/waterfalllib/waterfalllib.iml" filepath="$PROJECT_DIR$/waterfalllib/waterfalllib.iml" />
+    </modules>
+  </component>
+</project>
