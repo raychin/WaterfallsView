@@ -59,14 +59,20 @@ public class WaterfallsFlowLayout extends LinearLayout {
         // 是否通过测量最小高度判断子布局位置
         resId = ta.getResourceId(R.styleable.RayWaterFallsLayout_is_measure_height, -1);
         isMeasureHeight = ta.getBoolean(R.styleable.RayWaterFallsLayout_is_measure_height, false);
+
+        // 列之间和控件上下左右间隔屏幕的距离
+        resId = ta.getResourceId(R.styleable.RayWaterFallsLayout_interval, -1);
+        interval = ta.getDimensionPixelOffset(R.styleable.RayWaterFallsLayout_interval, -1);
     }
 
     private LinearLayout rootLayout;
     private LayoutParams childParams;
+    private LayoutParams childParams2;
 
     private void init() {
         rootLayout = new LinearLayout(getContext());
         rootLayout.setOrientation(LinearLayout.HORIZONTAL);
+        rootLayout.setPadding(interval, interval, interval, 0);
         addView(rootLayout, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         setColumn(column);
     }
@@ -83,20 +89,32 @@ public class WaterfallsFlowLayout extends LinearLayout {
             mObserver = new AdapterDataSetObserver();
             mAdapter.registerDataSetObserver(mObserver);
         }
-//        requestLayout();
         mItemCount = mAdapter.getCount();
         initItemView();
     }
 
     private AdapterDataSetObserver mObserver;
     public View getSelectedView() {
-        if(getAdapter() == null || getAdapter().getCount() ==0) { return null; }
+        if(getAdapter() == null || getAdapter().getCount() == 0) { return null; }
         return getAdapter().getView(selected, null, null);
     }
 
     private int selected = 0;
     public void setSelection(int position) {
         selected = position;
+    }
+
+    /**
+     * 列之间和控件上下左右间隔屏幕的距离
+     */
+    private int interval = 5;
+
+    public int getInterval() {
+        return interval;
+    }
+
+    public void setInterval(int interval) {
+        this.interval = interval;
     }
 
     /**
@@ -113,11 +131,14 @@ public class WaterfallsFlowLayout extends LinearLayout {
         if(rootLayout != null) {
             rootLayout.removeAllViews();
             linearLayouts = new LinearLayout[column];
-            childParams = new LayoutParams(getScreeWidth() / column, LayoutParams.WRAP_CONTENT, 1.0f);
+            int width = getScreeWidth() / column;
+            childParams = new LayoutParams(width, LayoutParams.WRAP_CONTENT, 1.0f);
+            childParams2 = new LayoutParams(width, LayoutParams.WRAP_CONTENT, 1.0f);
+            childParams2.rightMargin = interval;
             for(int i = 0; i < column; i ++) {
                 LinearLayout linearLayout = new LinearLayout(getContext());
                 linearLayout.setOrientation(LinearLayout.VERTICAL);
-                rootLayout.addView(linearLayout, childParams);
+                rootLayout.addView(linearLayout, (column > 1 && (i != column - 1)) ? childParams2 : childParams);
                 linearLayouts[i] = linearLayout;
             }
         }
@@ -170,6 +191,8 @@ public class WaterfallsFlowLayout extends LinearLayout {
     private LinearLayout[] linearLayouts;
     private void initItemView() {
         if(linearLayouts == null || linearLayouts.length == 0) { return; }
+        LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        itemParams.bottomMargin = interval;
         int start = 0;
         if (mItemCount > mOldItemCount && mOldItemCount != 0) {
             start = (mItemCount - mOldItemCount) - 1;
@@ -177,11 +200,11 @@ public class WaterfallsFlowLayout extends LinearLayout {
         for(int i = start; i < mItemCount; i ++) {
             View view = getAdapter().getView(i, null, null);
 
-            if(isMeasureHeight) { position = mixHeightView(); }
+            if(isMeasureHeight) { position = minHeightView(); }
 
-            linearLayouts[position].addView(view);
+            linearLayouts[position].addView(view, itemParams);
             if(!isMeasureHeight) {
-                position++;
+                position ++;
                 if (position >= column) {
                     position = 0;
                 }
@@ -205,20 +228,24 @@ public class WaterfallsFlowLayout extends LinearLayout {
      * 查找子布局高度最小的布局位置
      * @return
      */
-    private int mixHeightView(){
+    private int minHeightView(){
         if(linearLayouts == null || linearLayouts.length == 0) { return 0; }
-        int mixPosition = 0;
-        int mixHeight = calculateHeight(linearLayouts[mixPosition]);
-        for(int i = 1; i < linearLayouts.length; i ++) {
+        int minPosition = 0;
+        int minHeight = calculateHeight(linearLayouts[minPosition]);
+        for(int i = 0; i < linearLayouts.length; i ++) {
             int tempHeight = calculateHeight(linearLayouts[i]);
-            if(mixHeight > tempHeight) {
-                mixHeight = tempHeight;
-                mixPosition = i;
+            if(minHeight > tempHeight) {
+                minHeight = tempHeight;
+                minPosition = i;
             }
         }
-        return mixPosition;
+        return minPosition;
     }
 
+    /**
+     * 获取屏幕宽度
+     * @return
+     */
     private int getScreeWidth () {
         return ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getHeight();
     }

@@ -5,5 +5,7 @@
         <attr name="column" format="integer"/>
         <!--是否通过测量高度添加子控件-->
         <attr name="is_measure_height" format="boolean"/>
+        <!--列之间和控件上下左右间隔屏幕的距离-->
+        <attr name="interval" format="dimension"/>
     </declare-styleable>
 </resources>
