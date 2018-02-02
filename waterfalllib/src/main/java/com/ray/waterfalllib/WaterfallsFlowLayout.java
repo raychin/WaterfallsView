@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.os.Build;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowManager;
@@ -199,6 +200,26 @@ public class WaterfallsFlowLayout extends LinearLayout {
         }
         for(int i = start; i < mItemCount; i ++) {
             View view = getAdapter().getView(i, null, null);
+            view.setTag(i);
+            view.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = (int) v.getTag();
+                    if(mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(rootLayout, v, pos, (long) mAdapter.getItemId(pos));
+                    }
+                }
+            });
+            view.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    int pos = (int) v.getTag();
+                    if(mOnItemLongClickListener != null) {
+                        mOnItemLongClickListener.onItemLongClick(rootLayout, v, pos, (long) mAdapter.getItemId(pos));
+                    }
+                    return true;
+                }
+            });
 
             if(isMeasureHeight) { position = minHeightView(); }
 
@@ -248,5 +269,91 @@ public class WaterfallsFlowLayout extends LinearLayout {
      */
     private int getScreeWidth () {
         return ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getHeight();
+    }
+
+    private OnItemClickListener mOnItemClickListener;
+    /**
+     * Register a callback to be invoked when an item in this AdapterView has
+     * been clicked.
+     *
+     * @param listener The callback that will be invoked.
+     */
+    public void setOnItemClickListener(@Nullable OnItemClickListener listener) {
+        mOnItemClickListener = listener;
+    }
+
+    /**
+     * @return The callback to be invoked with an item in this AdapterView has
+     *         been clicked, or null id no callback has been set.
+     */
+    @Nullable
+    public final OnItemClickListener getOnItemClickListener() {
+        return mOnItemClickListener;
+    }
+
+    /**
+     * Interface definition for a callback to be invoked when an item in this
+     * AdapterView has been clicked.
+     */
+    public interface OnItemClickListener {
+        /**
+         * Callback method to be invoked when an item in this AdapterView has
+         * been clicked.
+         * <p>
+         * Implementers can call getItemAtPosition(position) if they need
+         * to access the data associated with the selected item.
+         *
+         * @param parent The LinearLayout where the click happened.
+         * @param view The view within the AdapterView that was clicked (this
+         *            will be a view provided by the adapter)
+         * @param position The position of the view in the adapter.
+         * @param id The row id of the item that was clicked.
+         */
+        void onItemClick(LinearLayout parent, View view, int position, long id);
+    }
+
+    private OnItemLongClickListener mOnItemLongClickListener;
+    /**
+     * Interface definition for a callback to be invoked when an item in this
+     * view has been clicked and held.
+     */
+    public interface OnItemLongClickListener {
+        /**
+         * Callback method to be invoked when an item in this view has been
+         * clicked and held.
+         *
+         * Implementers can call getItemAtPosition(position) if they need to access
+         * the data associated with the selected item.
+         *
+         * @param parent The LinearLayout where the click happened
+         * @param view The view within the AbsListView that was clicked
+         * @param position The position of the view in the list
+         * @param id The row id of the item that was clicked
+         *
+         * @return true if the callback consumed the long click, false otherwise
+         */
+        boolean onItemLongClick(LinearLayout parent, View view, int position, long id);
+    }
+
+
+    /**
+     * Register a callback to be invoked when an item in this AdapterView has
+     * been clicked and held
+     *
+     * @param listener The callback that will run
+     */
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        if (!isLongClickable()) {
+            setLongClickable(true);
+        }
+        mOnItemLongClickListener = listener;
+    }
+
+    /**
+     * @return The callback to be invoked with an item in this AdapterView has
+     *         been clicked and held, or null id no callback as been set.
+     */
+    public final OnItemLongClickListener getOnItemLongClickListener() {
+        return mOnItemLongClickListener;
     }
 }

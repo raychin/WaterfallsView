@@ -2,6 +2,9 @@ package com.ray.demo.waterfall;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.ray.demo.R;
 import com.ray.waterfalllib.WaterfallsFlowLayout;
@@ -72,5 +75,18 @@ public class WaterFallsActivity extends AppCompatActivity {
 
         WaterfallAdapter adapter = new WaterfallAdapter(WaterFallsActivity.this, beans);
         waterfallsFlowLayout.setAdapter(adapter);
+        waterfallsFlowLayout.setOnItemClickListener(new WaterfallsFlowLayout.OnItemClickListener() {
+            @Override
+            public void onItemClick(LinearLayout parent, View view, int position, long id) {
+                Toast.makeText(WaterFallsActivity.this, "第" + position +"项被点击", Toast.LENGTH_SHORT).show();
+            }
+        });
+        waterfallsFlowLayout.setOnItemLongClickListener(new WaterfallsFlowLayout.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(LinearLayout parent, View view, int position, long id) {
+                Toast.makeText(WaterFallsActivity.this, "第" + position +"项被长按", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
     }
 }
