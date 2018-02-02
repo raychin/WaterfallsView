@@ -24,7 +24,7 @@
 </ScrollView>
 ```
 
-需要使用ScrollView等控件包进去，同时需要应用“xmlns:app="http://schemas.android.com/apk/res-auto"
+需要使用ScrollView等控件包进去，同时需要应用xmlns:app="http://schemas.android.com/apk/res-auto"
 
 app:column设置瀑布流列数
 
